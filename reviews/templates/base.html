@@ -1,0 +1,158 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Brew & Books{% endblock %}</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:ital,wght@0,500;0,600;1,400&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{% static 'reviews/css/style.css' %}">
+</head>
+
+<body>
+
+<nav class="main-navbar">
+    <div class="navbar-inner">
+
+        <a href="{% url 'home' %}" class="brand">
+
+            <svg
+                class="brand-logo"
+                viewBox="0 0 100 100"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M15 64 L50 57 L85 64 L85 78 L50 70 L15 78 Z"
+                    fill="#c39a61"
+                />
+
+                <path
+                    d="M22 57 L78 57 L78 68 L22 68 Z"
+                    fill="#e8cda0"
+                />
+
+                <path
+                    d="M28 35 H72 V59
+                    C72 70 63 77 50 77
+                    C37 77 28 70 28 59 Z"
+                    fill="#fff8e8"
+                    stroke="#f4e3c3"
+                    stroke-width="2"
+                />
+
+                <ellipse
+                    cx="50"
+                    cy="35"
+                    rx="22"
+                    ry="6"
+                    fill="#8c6047"
+                />
+
+                <path
+                    d="M72 41
+                    C94 37 94 65 72 62"
+                    fill="none"
+                    stroke="#c39a61"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                />
+
+                <path
+                    d="M40 28 C32 20 45 17 40 8"
+                    fill="none"
+                    stroke="#c39a61"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+
+                <path
+                    d="M50 28 C42 20 55 17 50 8"
+                    fill="none"
+                    stroke="#c39a61"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+
+                <path
+                    d="M60 28 C52 20 65 17 60 8"
+                    fill="none"
+                    stroke="#c39a61"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+            </svg>
+
+            <div class="brand-text">
+                <span class="brand-name">Brew &amp; Books</span>
+                <span class="brand-tagline">GOOD BOOKS · WARMER DAYS</span>
+            </div>
+
+        </a>
+
+        <div class="nav-links">
+
+            <a href="{% url 'home' %}">Browse</a>
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'add_book' %}">+ Add a Book</a>
+
+                <span>Hi, {{ user.username }}</span>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">
+                        Log out
+                    </button>
+                </form>
+
+            {% else %}
+
+                <a href="{% url 'login' %}">Log in</a>
+
+                <a href="{% url 'signup' %}" class="signup-button">
+                    Sign up
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</nav>
+
+<main>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message-box">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer class="site-footer">
+    <p>
+        © {% now "Y" %} Brew &amp; Books · Good books, better coffee
+    </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

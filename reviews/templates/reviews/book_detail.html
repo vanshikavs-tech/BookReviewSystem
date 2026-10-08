@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} | Brew & Books{% endblock %}
+
+{% block content %}
+
+<div class="book-detail-page">
+
+    <a href="{% url 'home' %}" class="back-link">
+        ← Back to the shelf
+    </a>
+
+    <section class="book-detail-card">
+
+        <div class="book-detail-cover-area">
+
+            {% if book.cover_url %}
+                <img
+                    src="{{ book.cover_url }}"
+                    alt="{{ book.title }}"
+                    class="detail-cover"
+                >
+            {% else %}
+                <div class="detail-no-cover">
+                    📖
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="book-detail-info">
+
+            <p class="book-label">A BOOK ON THE SHELF</p>
+
+            <h1>{{ book.title }}</h1>
+
+            <p class="detail-author">
+                by {{ book.author|default:"Unknown author" }}
+            </p>
+
+            <div class="detail-rating">
+                <span class="stars">★★★★★</span>
+                <span>
+                    {{ book.average_rating|floatformat:1 }}
+                    · {{ book.review_count }} reviews
+                </span>
+            </div>
+
+            {% if book.published_year or book.language_code %}
+                <div class="book-meta">
+
+                    {% if book.published_year %}
+                        <span>Published {{ book.published_year }}</span>
+                    {% endif %}
+
+                    {% if book.language_code %}
+                        <span>{{ book.language_code|upper }}</span>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
+            {% if book.description %}
+                <div class="book-description">
+                    {{ book.description|linebreaks }}
+                </div>
+            {% else %}
+                <p class="book-description">
+                    No description is available for this book yet.
+                </p>
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <section class="review-layout">
+
+        <div class="review-form-card">
+
+            <p class="book-label">SHARE YOUR THOUGHTS</p>
+
+            <h2>Write a review</h2>
+
+            {% if user.is_authenticated %}
+
+                <form method="post" action="{% url 'add_review' book.pk %}">
+                    {% csrf_token %}
+
+                    <div class="form-field">
+                        <label for="{{ form.rating.id_for_label }}">
+                            Rating
+                        </label>
+
+                        {{ form.rating }}
+
+                        {% if form.rating.errors %}
+                            <div class="form-error">
+                                {{ form.rating.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.comment.id_for_label }}">
+                            Your thoughts
+                        </label>
+
+                        {{ form.comment }}
+
+                        {% if form.comment.errors %}
+                            <div class="form-error">
+                                {{ form.comment.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="review-button">
+                        Post Review
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <div class="login-message">
+                    <p>Log in to share your thoughts about this book.</p>
+
+                    <a href="{% url 'login' %}" class="review-button">
+                        Log in to review
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="reviews-card">
+
+            <div class="reviews-heading">
+                <div>
+                    <p class="book-label">FROM THE COMMUNITY</p>
+                    <h2>Reviews</h2>
+                </div>
+
+                <span class="review-count">
+                    {{ book.review_count }}
+                </span>
+            </div>
+
+            {% if reviews %}
+
+                {% for review in reviews %}
+
+                    <article class="review-item">
+
+                        <div class="review-top">
+
+                            <div>
+                                <h3>{{ review.user.username }}</h3>
+
+                                <p class="review-date">
+                                    {{ review.created_at|date:"M d, Y" }}
+                                </p>
+                            </div>
+
+                            <span class="review-stars">
+                                {% for star in review.full_stars %}
+                                    ★
+                                {% endfor %}
+                                {% for star in review.empty_stars %}
+                                    ☆
+                                {% endfor %}
+                            </span>
+
+                        </div>
+
+                        <p class="review-comment">
+                            {{ review.comment }}
+                        </p>
+
+                        {% if user == review.user or user.is_staff %}
+                            <form
+                                method="post"
+                                action="{% url 'delete_review' review.pk %}"
+                                class="delete-review-form"
+                            >
+                                {% csrf_token %}
+
+                                <button type="submit" class="delete-button">
+                                    Delete
+                                </button>
+                            </form>
+                        {% endif %}
+
+                    </article>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-reviews">
+                    <div class="empty-icon">☕</div>
+
+                    <h3>No reviews yet</h3>
+
+                    <p>
+                        Be the first to share your thoughts about this book.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

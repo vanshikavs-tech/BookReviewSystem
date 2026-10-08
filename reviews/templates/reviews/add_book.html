@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Add a Book &mdash; Brew &amp; Books{% endblock %}
+{% block content %}
+
+<div class="form-panel">
+    <h2>Add a Book to the Shelf</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            {{ form.title }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Author</label>
+            {{ form.author }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Genre</label>
+            {{ form.genre }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Cover image URL</label>
+            {{ form.cover_url }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Published year</label>
+            {{ form.published_year }}
+        </div>
+        <button type="submit" class="btn btn-shelf w-100">Add Book</button>
+    </form>
+</div>
+
+{% endblock %}
